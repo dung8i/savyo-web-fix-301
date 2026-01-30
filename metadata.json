@@ -1,0 +1,7 @@
+{
+  "name": "Savyo - Mua sắm thông minh",
+  "description": "Nền tảng hoàn tiền, săn deal và quản lý tài chính cá nhân thông minh với giao diện hiện đại và tính năng đa dạng.",
+  "requestFramePermissions": [
+    "clipboard-read"
+  ]
+}
