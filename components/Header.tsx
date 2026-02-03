@@ -23,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -92,14 +93,21 @@ const Header: React.FC<HeaderProps> = ({
                 className={`w-9 h-9 md:w-11 md:h-11 rounded-2xl flex items-center justify-center transition-all ${showNotifications ? 'bg-primary text-white shadow-lg' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400'}`}
               >
                 <i className="fas fa-bell text-lg"></i>
-                <span className="absolute top-1 right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-cardDark font-bold animate-pulse">3</span>
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-cardDark font-bold animate-pulse">{unreadCount}</span>
+                )}
               </button>
 
               {showNotifications && (
                 <div className="absolute top-full right-0 mt-4 w-72 md:w-80 bg-white dark:bg-cardDark rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-slideIn">
                   <div className="p-4 border-b dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
                     <h4 className="font-black text-[10px] uppercase tracking-widest italic">Thông báo</h4>
-                    <button className="text-[9px] text-primary font-black uppercase hover:underline">Đã đọc hết</button>
+                    <button 
+                      onClick={() => setUnreadCount(0)}
+                      className="text-[9px] text-primary font-black uppercase hover:underline"
+                    >
+                      Đã đọc hết
+                    </button>
                   </div>
                   <div className="max-h-96 overflow-y-auto custom-scrollbar">
                     {notifications.map((n, i) => (

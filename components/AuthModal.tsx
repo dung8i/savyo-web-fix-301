@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 interface AuthModalProps {
   onClose: () => void;
   onLoginSuccess: (email: string) => void;
+  onDemoClick: () => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess, onDemoClick }) => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [step, setStep] = useState<1 | 2>(1); // 1: Email, 2: OTP (For Register)
   const [email, setEmail] = useState('');
@@ -102,12 +103,24 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess }) => {
             </>
           )}
 
-          <button 
-            onClick={handleAction}
-            className="w-full py-5 bg-primary text-white rounded-2xl font-black text-xs shadow-xl hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest mt-4"
-          >
-            {mode === 'login' ? 'Đăng nhập ngay' : step === 1 ? 'Nhận mã OTP' : 'Hoàn tất đăng ký'}
-          </button>
+          <div className="space-y-3 pt-2">
+            <button 
+                onClick={handleAction}
+                className="w-full py-5 bg-primary text-white rounded-2xl font-black text-xs shadow-xl hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
+            >
+                {mode === 'login' ? 'Đăng nhập ngay' : step === 1 ? 'Nhận mã OTP' : 'Hoàn tất đăng ký'}
+            </button>
+            
+            {/* Nút Trải nghiệm Demo thêm ở đây */}
+            {mode === 'login' && (
+                <button 
+                    onClick={onDemoClick}
+                    className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-black text-xs shadow-md hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition-all uppercase tracking-widest flex items-center justify-center gap-2 group"
+                >
+                    <i className="fas fa-flask group-hover:text-primary transition-colors"></i> Trải nghiệm Demo
+                </button>
+            )}
+          </div>
 
           <div className="relative py-4 flex items-center">
             <div className="flex-grow border-t border-slate-100 dark:border-slate-800"></div>

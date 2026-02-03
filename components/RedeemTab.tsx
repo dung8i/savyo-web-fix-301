@@ -14,6 +14,8 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [showVoucherDetail, setShowVoucherDetail] = useState<Voucher | null>(null);
 
+  const isDemo = user.email === 'demo.guest@savyo.vn';
+
   const brands = [
     { name: 'KFC', icon: 'fa-drumstick-bite', color: '#e4002b' },
     { name: 'Highland', icon: 'fa-coffee', color: '#8b0000' },
@@ -23,21 +25,21 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
     { name: 'Shopee', icon: 'fa-shopping-cart', color: '#ee4d2d' },
   ];
 
-  const incomingDonations = [
+  const incomingDonations = isDemo ? [
     { id: 'd1', label: 'Hoàn tiền Shopee', amount: 45000, time: 'Vừa xong' },
     { id: 'd2', label: 'Hoàn tiền Lazada', amount: 12000, time: '10 phút trước' },
     { id: 'd3', label: 'Thưởng mời bạn', amount: 100000, time: 'Hôm nay' },
-  ];
+  ] : [];
 
-  const withdrawalHistory: WithdrawalRecord[] = [
+  const withdrawalHistory: WithdrawalRecord[] = isDemo ? [
     { id: '1', amount: 200000, time: '14:20 22/10/2024', status: 'completed' },
     { id: '2', amount: 50000, time: '09:15 15/10/2024', status: 'completed' },
-  ];
+  ] : [];
 
-  const voucherHistory: Voucher[] = [
+  const voucherHistory: Voucher[] = isDemo ? [
     { id: 'v1', brand: 'Phúc Long', value: '50k', price: 45000, expiry: '31/12/2024', code: 'PL50SAVYO', qr: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PL50SAVYO' },
     { id: 'v2', brand: 'Grab', value: '100k', price: 90000, expiry: '15/11/2024', code: 'GR100SAVYO', qr: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GR100SAVYO' },
-  ];
+  ] : [];
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '');
@@ -103,7 +105,7 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
                <i className="fas fa-plus-circle"></i> Vừa được cộng tiền
              </h4>
              <div className="space-y-3">
-                {incomingDonations.map(d => (
+                {incomingDonations.length > 0 ? incomingDonations.map(d => (
                    <div key={d.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-emerald-500/20 transition-all">
                       <div className="text-xs font-bold">{d.label}</div>
                       <div className="text-right">
@@ -111,7 +113,9 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
                          <div className="text-[9px] text-slate-400 font-bold uppercase">{d.time}</div>
                       </div>
                    </div>
-                ))}
+                )) : (
+                  <p className="text-center text-[10px] font-bold text-slate-400 italic py-4">Chưa có giao dịch gần đây</p>
+                )}
              </div>
           </div>
         </div>
@@ -162,7 +166,11 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
         title="Lịch sử giao dịch"
       >
         <i className="fas fa-history text-2xl"></i>
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black w-6 h-6 rounded-full flex items-center justify-center border-4 border-white dark:border-cardDark shadow-lg">9+</span>
+        {(withdrawalHistory.length > 0 || voucherHistory.length > 0) && (
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black w-6 h-6 rounded-full flex items-center justify-center border-4 border-white dark:border-cardDark shadow-lg">
+            {withdrawalHistory.length + voucherHistory.length}
+          </span>
+        )}
       </button>
 
       {/* Brand Voucher Selection Modal */}
@@ -225,7 +233,7 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
 
             <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar space-y-4">
               {historyTab === 'withdraw' ? (
-                withdrawalHistory.map(item => (
+                withdrawalHistory.length > 0 ? withdrawalHistory.map(item => (
                   <div key={item.id} className="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-800/40 border-2 border-transparent hover:border-primary/20 flex justify-between items-center group transition-all">
                     <div className="flex items-center gap-5">
                       <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform"><i className="fas fa-hand-holding-usd"></i></div>
@@ -236,8 +244,11 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
                     </div>
                     <span className="text-[10px] bg-emerald-100 text-emerald-600 px-4 py-1.5 rounded-full font-black uppercase tracking-widest shadow-sm">Hoàn tất</span>
                   </div>
-                ))
+                )) : (
+                  <div className="text-center py-10 text-slate-400 font-bold text-xs uppercase tracking-widest">Chưa có lịch sử rút tiền</div>
+                )
               ) : (
+                voucherHistory.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4">
                   {voucherHistory.map(v => (
                     <div key={v.id} className="p-6 rounded-[2rem] bg-white dark:bg-slate-800/40 border-4 border-dashed border-slate-100 dark:border-slate-700 relative group overflow-hidden hover:border-primary/40 transition-all">
@@ -259,6 +270,9 @@ const RedeemTab: React.FC<RedeemTabProps> = ({ user, setUser }) => {
                     </div>
                   ))}
                 </div>
+                ) : (
+                   <div className="text-center py-10 text-slate-400 font-bold text-xs uppercase tracking-widest">Chưa có voucher nào</div>
+                )
               )}
             </div>
           </div>

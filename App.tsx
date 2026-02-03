@@ -20,7 +20,8 @@ const App: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [openSettingsOnLoad, setOpenSettingsOnLoad] = useState<boolean>(false);
   
-  const [user, setUser] = useState<User>({
+  // Định nghĩa thông tin người dùng mặc định
+  const defaultUser: User = {
     name: '',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
     rank: 'Thành viên Mới',
@@ -31,7 +32,9 @@ const App: React.FC = () => {
     bankOwnerName: '',
     email: '',
     balance: 0
-  });
+  };
+
+  const [user, setUser] = useState<User>(defaultUser);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -43,13 +46,34 @@ const App: React.FC = () => {
 
   const handleLoginSuccess = (email: string) => {
     const generatedName = email.split('@')[0];
-    setUser(prev => ({
-      ...prev,
+    
+    // Quan trọng: Sử dụng defaultUser làm gốc thay vì prev state
+    // để đảm bảo xóa sạch các thông tin cũ (như demo phone, bank account...)
+    setUser({
+      ...defaultUser,
       name: generatedName.charAt(0).toUpperCase() + generatedName.slice(1),
       email: email,
       avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${generatedName}`,
-      balance: 150000 // Demo balance
-    }));
+      // Số dư mặc định là 0 theo defaultUser
+    });
+    
+    setIsLoggedIn(true);
+    setShowAuthModal(false);
+  };
+
+  const handleDemoAccess = () => {
+    setUser({
+      name: 'Khách Trải Nghiệm',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=DemoUser',
+      rank: 'Hạng Thử Nghiệm',
+      birthYear: 2000,
+      phone: '0901234567',
+      bankAccount: '000011112222',
+      bankName: 'Savyo Bank',
+      bankOwnerName: 'KHACH TRAI NGHIEM',
+      email: 'demo.guest@savyo.vn',
+      balance: 5000000
+    });
     setIsLoggedIn(true);
     setShowAuthModal(false);
   };
@@ -57,18 +81,7 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setActiveTab(TabType.HOME);
-    setUser({
-      name: '',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
-      rank: 'Thành viên Mới',
-      birthYear: 0,
-      phone: '',
-      bankAccount: '',
-      bankName: '',
-      bankOwnerName: '',
-      email: '',
-      balance: 0
-    });
+    setUser(defaultUser);
   };
 
   const goToSettings = () => {
@@ -80,11 +93,11 @@ const App: React.FC = () => {
     if (!isLoggedIn) {
       return (
         <div className="relative min-h-[60vh]">
-          <div className="blur-xl pointer-events-none select-none">
+          <div className="blur-xl pointer-events-none select-none opacity-50">
             {content}
           </div>
           <div className="absolute inset-0 z-50 flex items-center justify-center p-6">
-            <div className="bg-white/80 dark:bg-cardDark/80 backdrop-blur-2xl p-10 rounded-[3rem] shadow-2xl border border-white/20 text-center max-w-md animate-scaleUp">
+            <div className="bg-white/90 dark:bg-cardDark/90 backdrop-blur-2xl p-8 md:p-10 rounded-[3rem] shadow-2xl border border-white/20 text-center max-w-md animate-scaleUp w-full">
               <div className="w-20 h-20 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner">
                 <i className="fas fa-lock"></i>
               </div>
@@ -92,12 +105,20 @@ const App: React.FC = () => {
               <p className="text-slate-500 dark:text-slate-400 text-sm font-bold mb-8 leading-relaxed">
                 Vui lòng đăng nhập hoặc đăng ký tài khoản Savyo để truy cập tính năng này.
               </p>
-              <button 
-                onClick={() => setShowAuthModal(true)}
-                className="w-full py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all"
-              >
-                Đăng nhập ngay
-              </button>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => setShowAuthModal(true)}
+                  className="w-full py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all"
+                >
+                  Đăng nhập ngay
+                </button>
+                <button 
+                  onClick={handleDemoAccess}
+                  className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition-all"
+                >
+                  <i className="fas fa-flask mr-2"></i> Trải nghiệm Demo
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -112,7 +133,7 @@ const App: React.FC = () => {
       case TabType.DEALS: return <DealsTab />;
       case TabType.REDEEM: return renderProtectedTab(<RedeemTab user={user} setUser={setUser} />);
       case TabType.COMMUNITY: return renderProtectedTab(<CommunityTab user={user} />);
-      case TabType.WALLET: return renderProtectedTab(<WalletTab />);
+      case TabType.WALLET: return renderProtectedTab(<WalletTab user={user} />);
       case TabType.ACCOUNT: return renderProtectedTab(
         <AccountTab 
           user={user} 
@@ -156,6 +177,7 @@ const App: React.FC = () => {
         <AuthModal 
           onClose={() => setShowAuthModal(false)} 
           onLoginSuccess={handleLoginSuccess}
+          onDemoClick={handleDemoAccess}
         />
       )}
     </div>

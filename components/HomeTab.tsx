@@ -26,16 +26,20 @@ const flashDeals = [
     oldPrice: 8490000,
     discount: '-24%',
     platform: 'Shopee',
-    img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80'
+    // Ảnh tai nghe Sony XM5 đen
+    img: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=800&q=80',
+    link: 'https://shopee.vn/Tai-nghe-bluetooth-Sony-WH-1000XM5-m%C3%A0ng-loa-30mm-chu%E1%BA%A9n-Hi-Res-c%C3%B4ng-ngh%E1%BB%87-Auto-NC-Optimizer-ch%E1%BB%91ng-%E1%BB%93n-th%C3%B4ng-minh-pin-30h-i.1152330179.25364859955?extraParams=%7B%22display_model_id%22%3A127849238156%2C%22model_selection_logic%22%3A3%7D&sp_atk=34e69c55-fcd2-4290-90f8-f0081da9670d&xptdk=34e69c55-fcd2-4290-90f8-f0081da9670d'
   },
   {
     id: 2,
-    name: 'Đồng hồ Apple Watch Series 9',
+    name: 'Đồng hồ Apple Watch Series 10',
     price: 9990000,
     oldPrice: 11990000,
     discount: '-17%',
-    platform: 'Lazada',
-    img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'
+    platform: 'Shopee',
+    // Ảnh Apple Watch
+    img: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=800&q=80',
+    link: 'https://shopee.vn/Apple-Watch-Series-10-GPS-46mm-D%C3%A2y-V%E1%BA%A3i-Ch%C3%ADnh-h%C3%A3ng-i.308461157.27862957548?extraParams=%7B%22display_model_id%22%3A256707063132%2C%22model_selection_logic%22%3A3%7D&sp_atk=bbc7519f-c6b7-4578-87d3-524ded8a3310&xptdk=bbc7519f-c6b7-4578-87d3-524ded8a3310'
   },
   {
     id: 3,
@@ -43,8 +47,10 @@ const flashDeals = [
     price: 2500000,
     oldPrice: 3200000,
     discount: '-22%',
-    platform: 'TikTok Shop',
-    img: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=800&q=80'
+    platform: 'Shopee',
+    // Ảnh bàn phím cơ
+    img: 'https://images.unsplash.com/photo-1587829741301-dc798b91a603?auto=format&fit=crop&w=800&q=80',
+    link: 'https://shopee.vn/-CH%C3%8DNH-H%C3%83NG-B%C3%A0n-ph%C3%ADm-c%C6%A1-kh%C3%B4ng-d%C3%A2y-Nuphy-Air75-V3-B%C3%A0n-ph%C3%ADm-bluetooth-Low-profile-si%C3%AAu-m%E1%BB%8Fng-3-mode-k%E1%BA%BFt-n%E1%BB%91i-N%C3%BAm-xo-i.987184142.41311166331'
   },
   {
     id: 4,
@@ -53,7 +59,9 @@ const flashDeals = [
     oldPrice: 2450000,
     discount: '-24%',
     platform: 'Shopee',
-    img: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80'
+    // Ảnh chuột MX Master
+    img: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80',
+    link: 'https://shopee.vn/Chu%E1%BB%99t-kh%C3%B4ng-d%C3%A2y-Bluetooth-Logitech-MX-Master-3s-%E2%80%93-Y%C3%AAn-t%C4%A9nh-8K-DPI-Cu%E1%BB%99n-si%C3%AAu-nhanh-s%E1%BA%A1c-USB-C-i.52679373.21616681122'
   }
 ];
 
@@ -191,7 +199,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ onSwitchTab }) => {
         return;
       }
 
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `Analyze this shopping link from ${platform}: "${trimmedLink}".
@@ -444,7 +452,12 @@ const HomeTab: React.FC<HomeTabProps> = ({ onSwitchTab }) => {
                   <span className="text-base font-black text-red-500">{deal.price.toLocaleString()}đ</span>
                   <span className="text-[10px] text-slate-400 line-through mb-1">{deal.oldPrice.toLocaleString()}đ</span>
                </div>
-               <button className="w-full py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">Mua ngay</button>
+               <button 
+                onClick={() => window.open(deal.link, '_blank')}
+                className="w-full py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+               >
+                 Mua ngay
+               </button>
             </div>
           ))}
         </div>
