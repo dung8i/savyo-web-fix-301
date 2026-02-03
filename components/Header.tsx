@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({
   
   const navItems = [
     { type: TabType.HOME, label: 'Trang chủ', icon: 'fa-home' },
-    { type: TabType.DEALS, label: 'Deal Hot', icon: 'fa-fire' },
+    { type: TabType.DEALS, label: 'Săn Deal', icon: 'fa-fire' },
     { type: TabType.REDEEM, label: 'Đổi quà', icon: 'fa-gift' },
     { type: TabType.COMMUNITY, label: 'Cộng đồng', icon: 'fa-users' },
     { type: TabType.WALLET, label: 'Ví', icon: 'fa-wallet' },
